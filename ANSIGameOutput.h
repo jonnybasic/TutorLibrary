@@ -13,7 +13,9 @@ public:
 	virtual void shutdown();
 
 	virtual void setViewport(int w, int h);
-	virtual void getViewport(int &w, int &h);
+	virtual void getViewport(int &w, int &h) const;
+
+	virtual void setCursorVisible(bool visible);
 
 	virtual void moveTo(int x, int y);
 	virtual void save();
@@ -25,6 +27,9 @@ public:
 	virtual void print(const char *message);
 
 	virtual void drawBox(int x, int y, int w, int h);
+
+	virtual void enterBuffer();
+	virtual void exitBuffer();
 
 	virtual void clear();
 
@@ -62,8 +67,8 @@ private:
 	void * m_Handle;
 	bool m_IsEnabled;
 	bool m_InLineMode;
-	int m_ViewportHeight;
-	int m_ViewportWidth;
+	//int m_ViewportHeight;
+	//int m_ViewportWidth;
 	unsigned long m_ModeDefault;
 	unsigned long long m_LastError;
 };

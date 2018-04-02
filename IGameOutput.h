@@ -9,7 +9,7 @@ public:
 	virtual void shutdown() = 0;
 
 	virtual void setViewport(int w, int h) = 0;
-	virtual void getViewport(int &w, int &h) = 0;
+	virtual void getViewport(int &w, int &h) const = 0;
 
 	virtual void moveTo(int x, int y) = 0;
 	

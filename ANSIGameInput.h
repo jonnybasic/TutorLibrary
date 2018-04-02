@@ -12,7 +12,8 @@ public:
 	virtual bool initialize();
 	virtual void shutdown();
 
-	virtual byte getInput();
+	virtual byte getInput() const;
+	virtual bool tryGetInput(byte &input) const;
 
 	unsigned long long getLastError() const {
 		return m_LastError;

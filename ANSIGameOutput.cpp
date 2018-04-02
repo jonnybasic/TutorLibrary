@@ -78,6 +78,20 @@ bool ANSIGameOutput::getConsoleMode(unsigned long *mode)
 	return true;
 }
 
+void ANSIGameOutput::setCursorVisible(bool visible)
+{
+	if (visible)
+	{
+		// Turn on cursor
+		printf(CURSOR_ON);
+	}
+	else
+	{
+		// Turn off cursor
+		printf(CURSOR_OFF);
+	}
+}
+
 bool ANSIGameOutput::initialize()
 {
 	if (!m_Handle)
@@ -94,13 +108,6 @@ bool ANSIGameOutput::initialize()
 		m_IsEnabled = true;
 		// Enter the alternate buffer
 		printf(ENTER_BUFFER);
-		// get screen size
-		CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
-		if (GetConsoleScreenBufferInfo(m_Handle, &csbiInfo))
-		{
-			m_ViewportHeight = csbiInfo.dwSize.Y;
-			m_ViewportWidth = csbiInfo.dwSize.X;
-		}
 		// Turn off cursor
 		printf(CURSOR_OFF);
 		return true;
@@ -109,6 +116,16 @@ bool ANSIGameOutput::initialize()
 	{
 		return false;
 	}
+}
+
+void ANSIGameOutput::enterBuffer()
+{
+	printf(ENTER_BUFFER);
+}
+
+void ANSIGameOutput::exitBuffer()
+{
+	printf(EXIT_BUFFER);
 }
 
 void ANSIGameOutput::shutdown()
@@ -122,13 +139,22 @@ void ANSIGameOutput::shutdown()
 
 void ANSIGameOutput::setViewport(int w, int h)
 {
-
+	// set screen size
+	SMALL_RECT windowSize;
+	windowSize.Bottom = h;
+	windowSize.Left = w;
+	SetConsoleWindowInfo(m_Handle, FALSE, &windowSize);
 }
 
-void ANSIGameOutput::getViewport(int &w, int &h)
+void ANSIGameOutput::getViewport(int &w, int &h) const
 {
-	h = m_ViewportHeight;
-	w = m_ViewportWidth;
+	// get screen size
+	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+	if (GetConsoleScreenBufferInfo(m_Handle, &csbiInfo))
+	{
+		h = csbiInfo.dwSize.Y;
+		w = csbiInfo.dwSize.X;
+	}
 }
 
 void ANSIGameOutput::setForeColor(const Color &color)
@@ -182,7 +208,7 @@ void ANSIGameOutput::print(const char *message)
 
 void ANSIGameOutput::drawBox(int x, int y, int w, int h)
 {
-	setInLineMode(true);
+	printf(ENTER_LINE);
 	save();
 	moveTo(x, y);
 	printLine(LineCode::CornerTopLeft);
@@ -206,7 +232,7 @@ void ANSIGameOutput::drawBox(int x, int y, int w, int h)
 	}
 	printLine(LineCode::CornerBottomRight);
 	restore();
-	setInLineMode(false);
+	printf(EXIT_LINE);
 }
 
 void ANSIGameOutput::printLine(LineCode code)

@@ -1,5 +1,5 @@
 #include <windows.h>
-#include <stdio.h>
+#include <conio.h>
 #include <iostream>
 
 #include "ANSIGameInput.h"
@@ -76,8 +76,17 @@ void ANSIGameInput::shutdown()
 	m_IsEnabled = false;
 }
 
-byte ANSIGameInput::getInput()
+byte ANSIGameInput::getInput() const
 {
-	return _getwch();
+	return static_cast<byte>(_getch());
+}
+
+bool ANSIGameInput::tryGetInput(byte &input) const {
+	if (_kbhit())
+	{
+		input = static_cast<byte>(_getch());
+		return true;
+	}
+	return false;
 }
 

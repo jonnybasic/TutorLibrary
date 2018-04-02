@@ -7,13 +7,35 @@
 class GameEngine
 {
 public:
-	GameEngine(IGameInput *input, IGameOutput *output);
 	virtual ~GameEngine();
 
-	virtual void run();
+	void setUpdateRate(double rate);
+	double getUpdateRate() const;
+
+	bool getIsRunning() const;
+		
+	void run();
+	
+protected:
 
 protected:
+	GameEngine(IGameInput *input, IGameOutput *output);
+
+	void setIsRunning(bool isRunning = true);
+
+	virtual bool initialize(IGameInput *input, IGameOutput *output) { return true; };
+	virtual void shutdown() { };
+
+	virtual void update(double frameTime) { };
+	virtual void updateInput(const IGameInput *input) { };
+	virtual void updateOutput(IGameOutput *output, double frameTime) { };
+
+	virtual void updateWindow(int width, int height) { };
+
+private:
 	IGameInput * m_Input;
-	IGameOutput * m_Outut;
+	IGameOutput * m_Output;
+	bool m_IsRunning;
+	double m_MaxFrameTime;
 };
 
