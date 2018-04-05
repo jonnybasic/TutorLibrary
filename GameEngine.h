@@ -36,6 +36,8 @@ private:
 	IGameInput * m_Input;
 	IGameOutput * m_Output;
 	bool m_IsRunning;
+	int m_ScreenHeight;
+	int m_ScreenWidth;
 	double m_MaxFrameTime;
 };
 

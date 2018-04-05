@@ -12,6 +12,8 @@ GameEngine::GameEngine(
 	: m_Input(input),
 	m_Output(output),
 	m_IsRunning(false),
+	m_ScreenHeight(0),
+	m_ScreenWidth(0),
 	m_MaxFrameTime(1.0 / 30.0)
 {
 }
@@ -72,11 +74,14 @@ void GameEngine::run()
 	{
 		// Perform update
 		const auto frameStartTime = system_clock::now();
-		duration<double> frameTime(lastFrameTime - frameStartTime);
 
 		// Check for screen change
 		m_Output->getViewport(screenWidth, screenHeight);
-		updateWindow(screenWidth, screenHeight);
+		if (screenWidth != m_ScreenWidth || screenHeight != m_ScreenHeight) {
+			m_ScreenHeight = screenHeight;
+			m_ScreenWidth = screenWidth;
+			updateWindow(screenWidth, screenHeight);
+		}
 
 		// Collect input
 		updateInput(m_Input);
@@ -87,6 +92,7 @@ void GameEngine::run()
 		}
 
 		// Main update
+		duration<double> frameTime(lastFrameTime - frameStartTime);
 		update(frameTime.count());
 		const auto updateEndTime = system_clock::now();
 		const duration<double> updateTime(updateEndTime - frameStartTime);
