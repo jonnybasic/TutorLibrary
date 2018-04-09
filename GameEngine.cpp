@@ -45,6 +45,19 @@ void GameEngine::setIsRunning(bool isRunning)
 	m_IsRunning = isRunning;
 }
 
+void GameEngine::checkWindowSize()
+{
+	auto screenWidth = 0;
+	auto screenHeight = 0;
+	// Check for screen change
+	m_Output->getViewport(screenWidth, screenHeight);
+	if (screenWidth != m_ScreenWidth || screenHeight != m_ScreenHeight) {
+		m_ScreenHeight = screenHeight;
+		m_ScreenWidth = screenWidth;
+		updateWindow(screenWidth, screenHeight);
+	}
+}
+
 void GameEngine::run()
 {
 	if (!m_Input->initialize())
@@ -57,6 +70,7 @@ void GameEngine::run()
 		// TODO: set error
 		return;
 	}
+	checkWindowSize();
 	if (!initialize(m_Input, m_Output))
 	{
 		// TODO: set error
@@ -66,22 +80,14 @@ void GameEngine::run()
 	// start
 	m_IsRunning = true;
 
-	auto screenWidth = 0;
-	auto screenHeight = 0;
-
 	auto lastFrameTime = system_clock::now();
 	while (m_IsRunning)
 	{
 		// Perform update
 		const auto frameStartTime = system_clock::now();
 
-		// Check for screen change
-		m_Output->getViewport(screenWidth, screenHeight);
-		if (screenWidth != m_ScreenWidth || screenHeight != m_ScreenHeight) {
-			m_ScreenHeight = screenHeight;
-			m_ScreenWidth = screenWidth;
-			updateWindow(screenWidth, screenHeight);
-		}
+		// Process reseize
+		checkWindowSize();
 
 		// Collect input
 		updateInput(m_Input);

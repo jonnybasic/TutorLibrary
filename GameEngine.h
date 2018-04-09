@@ -32,6 +32,8 @@ protected:
 
 	virtual void updateWindow(int width, int height) { };
 
+	void checkWindowSize();
+
 private:
 	IGameInput * m_Input;
 	IGameOutput * m_Output;
